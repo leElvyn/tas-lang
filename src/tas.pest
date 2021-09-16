@@ -1,0 +1,26 @@
+input = {
+    A_key |
+    B_key |
+    X_key |
+    Y_key |
+    Dl_key |
+    Du_key |
+    Dr_key |
+    Dd_key 
+}
+    A_key = { "A" }
+    B_key = { "B" }
+    X_key = { "X" }
+    Y_key = { "Y" }
+    Dl_key = { "Dl" }
+    Du_key = { "Du" }
+    Dr_key = { "Dr" }
+    Dd_key = { "Dd" }
+    
+frame_number = { ASCII_DIGIT+ }
+
+frame_argument = { "(" ~ frame_number ~ ")" }
+
+full_input = { input ~ frame_argument ~ "\n" }
+
+file = { SOI ~ full_input+ ~ EOI}
