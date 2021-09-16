@@ -1,3 +1,5 @@
+WHITESPACE = _{ " " }
+
 input = {
     KEY_A |
     KEY_B |
@@ -17,12 +19,21 @@ input = {
     KEY_Dr = { "Dr" }
     KEY_Dd = { "Dd" }
     
-frame_number = { ASCII_DIGIT+ }
+number = { ASCII_DIGIT+ }
 
-frame_argument = { "(" ~ frame_number ~ ")" }
+number_argument = { "(" ~ number ~ ")" }
 
-full_input = { input ~ frame_argument}
+key_input = { input ~ number_argument}
 
-line = { (full_input ~ (" "* ~ "/" ~ " "* ~ full_input)*) ~ "\n"}
+opening_bracket = { "{" }
+closing_bracket = { "}" ~ "\n"* }
 
-file = { SOI ~ line+ ~ EOI}
+block_declaration = { "loop" ~ number_argument }
+
+block_body = { (line | block)+ }
+
+block = { block_declaration ~ opening_bracket ~ "\n" ~ block_body ~ closing_bracket }
+
+line = { key_input ~ "\n"}
+
+file = { SOI ~ (line | block)+ ~ EOI}
