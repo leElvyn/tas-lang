@@ -33,6 +33,9 @@ fn main() {
     .expect("unsuccessful parse") // unwrap the parse result
     .next().unwrap(); // get and unwrap the `file` rule; never fails
     
+    println!("Parsing success in {} seconds", now.elapsed().as_secs_f32());
+    let now = Instant::now();
+    
     let mut output = String::new();
 
     let mut frame_counter = 0;
@@ -50,21 +53,17 @@ fn main() {
 
                 let instruction = line.into_inner().next().unwrap();
                 // for now, we only support one instruction per line
+                let mut instruction_iter = instruction.into_inner();
 
-                instruction.into_inner().for_each(|input| {
-                    match input.as_rule() {
+                let input = instruction_iter.next().unwrap();
                         
-                        Rule::input => {
-                            input_type = format!("{:?}", input.into_inner().next().unwrap().as_rule());
-                        },
-                        Rule::frame_argument => {
+                input_type = format!("{:?}", input.into_inner().next().unwrap().as_rule());
+                        
+                let frame_argument = instruction_iter.next().unwrap();
                             
-                            frame_number = input.into_inner().next().unwrap().as_str()
-                                .parse::<u32>().expect("unsuccessful parse");
-                        }
-                        _ => unreachable!(),
-                    }
-                });
+                frame_number = frame_argument.into_inner().next().unwrap().as_str()
+                    .parse::<u32>().expect("unsuccessful parse");
+                        
 
                 (0..frame_number).for_each(|_| {
                     frame_counter += 1;
