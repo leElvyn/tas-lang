@@ -21,6 +21,8 @@ frame_number = { ASCII_DIGIT+ }
 
 frame_argument = { "(" ~ frame_number ~ ")" }
 
-full_input = { input ~ frame_argument ~ "\n" }
+full_input = { input ~ frame_argument}
 
-file = { SOI ~ full_input+ ~ EOI}
+line = { (full_input ~ (" "* ~ "/" ~ " "* ~ full_input)*) ~ "\n"}
+
+file = { SOI ~ line+ ~ EOI}

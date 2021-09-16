@@ -5,6 +5,7 @@ extern crate pest_derive;
 use pest::Parser;
 use std::fs;
 use std::io::prelude::*;
+use std::time::{Instant};
 
 #[derive(Parser)]
 #[grammar = "tas.pest"]
@@ -18,28 +19,39 @@ fn write_to_file(result: &String) -> std::io::Result<()> {
 }
 
 fn main() {
+    
     let mut unparsed_file = fs::read_to_string("script.taspl").expect("cannot read file");
-
+    
     if unparsed_file.chars().last() != Some('\n') {
         // Add a newline if it's missing. if file is empty, parse will fail, don't add a new line
         unparsed_file.push('\n');
     }
-
+    
+    let now = Instant::now();
+    
     let file = TASParser::parse(Rule::file, &unparsed_file)
-        .expect("unsuccessful parse") // unwrap the parse result
-        .next().unwrap(); // get and unwrap the `file` rule; never fails
-
+    .expect("unsuccessful parse") // unwrap the parse result
+    .next().unwrap(); // get and unwrap the `file` rule; never fails
+    
     let mut output = String::new();
 
     let mut frame_counter = 0;
 
     for line in file.into_inner() {
+        // matching singular lines
         match line.as_rule() {
-            Rule::full_input => {
+            Rule::line => {
+                // for every line
 
                 let mut input_type = String::new();
                 let mut frame_number: u32 = 0;
-                line.into_inner().for_each(|input| {
+                // number of times to repeat the line
+
+
+                let instruction = line.into_inner().next().unwrap();
+                // for now, we only support one instruction per line
+
+                instruction.into_inner().for_each(|input| {
                     match input.as_rule() {
                         
                         Rule::input => {
@@ -64,8 +76,11 @@ fn main() {
             _ => (),
         }
     }
+    println!("Compilation success in {} seconds", now.elapsed().as_secs_f32());
 
-    write_to_file(&output);
+    let _ = write_to_file(&output);
 
-    println!("{}", output);
+    
+
+
 }
