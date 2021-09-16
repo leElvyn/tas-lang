@@ -3,6 +3,8 @@ extern crate pest;
 extern crate pest_derive;
 
 use pest::Parser;
+use pest::iterators::{Pair};
+use pest::RuleType;
 use std::fs;
 use std::io::prelude::*;
 use std::time::{Instant};
@@ -16,6 +18,30 @@ fn write_to_file(result: &String) -> std::io::Result<()> {
     let mut file = fs::File::create("script1-0.txt")?;
     file.write_all(result.as_bytes())?;
     Ok(())
+}
+
+fn process_loop(block: Pair<Rule>) -> String {
+    let mut result = String::new();
+
+    result
+}
+
+fn process_block(block: Pair<Rule>) {
+    let block_type: RuleType;
+    for block_part in block.into_inner() {
+        // for every block part. This includes the block declaration, and the block body
+        match block_part.as_rule() {
+            Rule::block_declaration => {
+                // for every block declaration.
+                for block_declaration_type in block_part.into_inner() {
+                    print!("{:?}", block_declaration_type);
+                    
+                }
+            },
+            _ => ()
+        }
+
+    }
 }
 
 fn main() {
@@ -44,10 +70,10 @@ fn main() {
         // matching singular lines
         match line.as_rule() {
             Rule::line => {
-                // for every line
+                // for every instruction line
 
-                let mut input_type = String::new();
-                let mut frame_number: u32 = 0;
+                let input_type: String;
+                let frame_number: u32;
                 // number of times to repeat the line
 
 
@@ -70,7 +96,11 @@ fn main() {
                     output.push_str(&format!("{} {} 0;0 0;0\n", frame_counter, input_type));
                 });
             },
-                 
+
+            Rule::block => {
+                // for every block. currentlu only loop blocks are supported
+                let block_result = process_block(line);
+            }
             Rule::EOI => (),
             _ => (),
         }
