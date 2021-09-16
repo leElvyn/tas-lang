@@ -4,10 +4,18 @@ extern crate pest_derive;
 
 use pest::Parser;
 use std::fs;
+use std::io::prelude::*;
 
 #[derive(Parser)]
 #[grammar = "tas.pest"]
-pub struct CSVParser;
+pub struct TASParser;
+
+
+fn write_to_file(result: &String) -> std::io::Result<()> {
+    let mut file = fs::File::create("script1-0.txt")?;
+    file.write_all(result.as_bytes())?;
+    Ok(())
+}
 
 fn main() {
     let mut unparsed_file = fs::read_to_string("script.taspl").expect("cannot read file");
@@ -17,11 +25,13 @@ fn main() {
         unparsed_file.push('\n');
     }
 
-    let file = CSVParser::parse(Rule::file, &unparsed_file)
+    let file = TASParser::parse(Rule::file, &unparsed_file)
         .expect("unsuccessful parse") // unwrap the parse result
         .next().unwrap(); // get and unwrap the `file` rule; never fails
 
     let mut output = String::new();
+
+    let mut frame_counter = 0;
 
     for line in file.into_inner() {
         match line.as_rule() {
@@ -33,7 +43,7 @@ fn main() {
                     match input.as_rule() {
                         
                         Rule::input => {
-                            input_type = format!("{}", input.as_str());
+                            input_type = format!("{:?}", input.into_inner().next().unwrap().as_rule());
                         },
                         Rule::frame_argument => {
                             
@@ -44,15 +54,18 @@ fn main() {
                     }
                 });
 
-                (0..frame_number).for_each(|i| {
-                    output.push_str(&format!("{} {}\n", i, input_type));
+                (0..frame_number).for_each(|_| {
+                    frame_counter += 1;
+                    output.push_str(&format!("{} {} 0;0 0;0\n", frame_counter, input_type));
                 });
             },
                  
             Rule::EOI => (),
             _ => (),
         }
-        output.push('\n');
     }
+
+    write_to_file(&output);
+
     println!("{}", output);
 }

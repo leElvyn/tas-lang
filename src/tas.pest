@@ -1,21 +1,21 @@
 input = {
-    A_key |
-    B_key |
-    X_key |
-    Y_key |
-    Dl_key |
-    Du_key |
-    Dr_key |
-    Dd_key 
+    KEY_A |
+    KEY_B |
+    KEY_X |
+    KEY_Y |
+    KEY_Dl |
+    KEY_Du |
+    KEY_Dr |
+    KEY_Dd 
 }
-    A_key = { "A" }
-    B_key = { "B" }
-    X_key = { "X" }
-    Y_key = { "Y" }
-    Dl_key = { "Dl" }
-    Du_key = { "Du" }
-    Dr_key = { "Dr" }
-    Dd_key = { "Dd" }
+    KEY_A = { "A" }
+    KEY_B = { "B" }
+    KEY_X = { "X" }
+    KEY_Y = { "Y" }
+    KEY_Dl = { "Dl" }
+    KEY_Du = { "Du" }
+    KEY_Dr = { "Dr" }
+    KEY_Dd = { "Dd" }
     
 frame_number = { ASCII_DIGIT+ }
 
