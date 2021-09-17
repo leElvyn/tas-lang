@@ -28,7 +28,9 @@ key_input = { input ~ number_argument}
 opening_bracket = { "{" }
 closing_bracket = { "}" ~ "\n"* }
 
-block_declaration = { "loop" ~ number_argument }
+loop_declaration = { "loop" ~ number_argument }
+
+block_declaration = { loop_declaration }
 
 block_body = { (line | block)+ }
 

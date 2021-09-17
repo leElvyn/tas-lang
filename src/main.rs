@@ -20,24 +20,41 @@ fn write_to_file(result: &String) -> std::io::Result<()> {
     Ok(())
 }
 
-fn process_loop(block: Pair<Rule>) -> String {
+fn process_loop(loop_declaration: Pair<Rule>, block_body: Pair<Rule>) -> String {
     let mut result = String::new();
 
     result
 }
 
 fn process_block(block: Pair<Rule>) {
-    let block_type: RuleType;
+    let mut block_type: Rule;
+    let mut block_declaration: Pair<Rule>;
     for block_part in block.into_inner() {
         // for every block part. This includes the block declaration, and the block body
         match block_part.as_rule() {
             Rule::block_declaration => {
-                // for every block declaration.
+                // for the block declaration.
                 for block_declaration_type in block_part.into_inner() {
-                    print!("{:?}", block_declaration_type);
-                    
+
+                    match block_declaration_type.as_rule() {
+                        Rule::loop_declaration => {
+                            // we mark the type of the block, here a loop, so we can call the right function later with the block body
+                            block_declaration = block_part;
+                            block_type = Rule::loop_declaration;
+                        },
+                        _ => unreachable!(),
+                    }
                 }
             },
+            Rule::block_body => {
+                // for the block body
+                match block_type {
+                    Rule::loop_declaration => {
+                        process_loop(block_declaration, block_part);
+                    }
+                }
+            }
+
             _ => ()
         }
 
